@@ -1,0 +1,24 @@
+modLoader="javafxmod"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="randommorph"
+version="1.0.0"
+displayName="Random Morph"
+description="Automatically morph into random mobs from Remorphed with configurable particles and sounds!"
+authors=["papasigh000-maker"]
+
+[[dependencies.randommorph]]
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.randommorph]]
+modId="remorphed"
+mandatory=false
+versionRange="*"
+ordering="NONE"
+side="BOTH"
