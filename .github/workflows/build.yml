@@ -20,25 +20,11 @@ jobs:
     - name: Grant execute permission to gradlew
       run: chmod +x ./gradlew
     
-    - name: Download Gradle
-      run: |
-        mkdir -p gradle/wrapper
-        curl -L https://services.gradle.org/distributions/gradle-8.1.1-bin.zip -o /tmp/gradle.zip
-        unzip -q /tmp/gradle.zip -d /tmp/
-        mv /tmp/gradle-8.1.1 ~/.gradle/wrapper/gradle-8.1.1
-    
     - name: Build with Gradle
       run: ./gradlew build
     
-    - name: Upload JAR Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: randommorph-jar
-        path: build/libs/randommorph-1.0.0.jar
-    
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
-      if: success()
       with:
         files: build/libs/randommorph-1.0.0.jar
         tag_name: v1.0.0
