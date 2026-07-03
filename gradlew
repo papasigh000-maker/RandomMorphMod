@@ -20,14 +20,12 @@ set -e
 
 DIRNAME=`cd "$(dirname "$0")" && pwd`
 APP_HOME="$DIRNAME"
+DIRNAME_REL=`cd "$(dirname "$0")" && pwd`
+DIRNAME_REL_ABS="$(cd "$DIRNAME_REL" 2>/dev/null && pwd -P)"
+DIRNAME_REL="${DIRNAME_REL_ABS##*/}"
 
-if [ -z "$JAVA_HOME" ]; then
-    JAVA_HOME=$(java -XshowSettings:properties -version 2>&1 | grep 'java.home' | awk '{print $NF}' | xargs dirname | xargs dirname)
+if [ ! -d "$APP_HOME/gradle/wrapper" ]; then
+    mkdir -p "$APP_HOME/gradle/wrapper"
 fi
 
-if [ ! -x "$JAVA_HOME/bin/java" ]; then
-    echo "Error: JAVA_HOME is not properly set or java is not available"
-    exit 1
-fi
-
-exec "$JAVA_HOME/bin/java" -XX:+IgnoreUnrecognizedVMOptions -XX:+UseG1GC -XX:G1NewCollectionIntervalInMs=300 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:+ParallelRefProcEnabled -XX:+AlwaysPreTouch -XX:+UnlockDiagnosticVMOptions -XX:G1SummarizeRSetStatsPeriod=1 -Xms1024m -Xmx2g -Dfile.encoding=UTF-8 -Duser.country=US -Duser.language=en -cp "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain "$@"
+exec java -XX:+IgnoreUnrecognizedVMOptions -XX:+UseG1GC -XX:G1NewCollectionIntervalInMs=300 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:+ParallelRefProcEnabled -XX:+AlwaysPreTouch -XX:+UnlockDiagnosticVMOptions -XX:G1SummarizeRSetStatsPeriod=1 -Xms1024m -Xmx2g -Dfile.encoding=UTF-8 -Duser.country=US -Duser.language=en -Dorg.gradle.appname="$APP_BASE_NAME" -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
