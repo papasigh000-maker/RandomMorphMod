@@ -16,27 +16,18 @@
 # limitations under the License.
 #
 
-appname=`basename "$0"`
-appargs=""
-while [ $# -gt 0 ]
-do
-    case "$1" in
-    -|-?|--?|-h|--help )
-        echo "Usage: $appname [OPTION]... [ARG]..."
-        exit 0
-        ;;
-    -v|--verbose )
-        appargs="$appargs -v"
-        shift
-        ;;
-    -d|--debug )
-        appargs="$appargs -d"
-        shift
-        ;;
-    * )
-        break
-        ;;
-    esac
-done
+set -e
 
-exec "$JAVACMD" $JAVA_OPTS -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+DIRNAME=`cd "$(dirname "$0")" && pwd`
+APP_HOME="$DIRNAME"
+
+if [ -z "$JAVA_HOME" ]; then
+    JAVA_HOME=$(java -XshowSettings:properties -version 2>&1 | grep 'java.home' | awk '{print $NF}' | xargs dirname | xargs dirname)
+fi
+
+if [ ! -x "$JAVA_HOME/bin/java" ]; then
+    echo "Error: JAVA_HOME is not properly set or java is not available"
+    exit 1
+fi
+
+exec "$JAVA_HOME/bin/java" -XX:+IgnoreUnrecognizedVMOptions -XX:+UseG1GC -XX:G1NewCollectionIntervalInMs=300 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:+ParallelRefProcEnabled -XX:+AlwaysPreTouch -XX:+UnlockDiagnosticVMOptions -XX:G1SummarizeRSetStatsPeriod=1 -Xms1024m -Xmx2g -Dfile.encoding=UTF-8 -Duser.country=US -Duser.language=en -cp "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain "$@"
